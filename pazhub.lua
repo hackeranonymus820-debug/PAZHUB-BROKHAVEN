@@ -563,4 +563,52 @@ makeSwitchRow("RAINBOW NAME", false, function(state)
     rainbowOn = state
     if state then
         setRainbow(LP, true)
-        rainbowConn = RunService.RenderStepped:Con
+        rainbowConn = RunService.RenderStepped:Connect(function(dt)
+            if not rainbowOn then return end
+            hue = (hue + dt * 0.15) % 1
+            local char = LP.Character
+            if not char then return end
+            local head = char:FindFirstChild("Head")
+            if not head then return end
+            local bill = head:FindFirstChild("RainbowName")
+            if bill then
+                local txt = bill:FindFirstChild("txt")
+                if txt then
+                    txt.TextColor3 = Color3.fromHSV(hue, 1, 1)
+                end
+            end
+        end)
+    else
+        if rainbowConn then rainbowConn:Disconnect() end
+        setRainbow(LP, false)
+    end
+end)
+
+LP.CharacterAdded:Connect(function()
+    if rainbowOn then
+        task.wait(1)
+        setRainbow(LP, true)
+    end
+end)
+
+------------------------------------------------------------
+-- FOOTER
+------------------------------------------------------------
+local Footer = Instance.new("TextLabel", MainFrame)
+Footer.Size = UDim2.new(1, -20, 0, 18)
+Footer.Position = UDim2.new(0, 10, 1, -20)
+Footer.BackgroundTransparency = 1
+Footer.Text = "created by zamstudio"
+Footer.TextColor3 = WHITE
+Footer.Font = Enum.Font.Gotham
+Footer.TextSize = 11
+Footer.TextTransparency = 0.3
+
+------------------------------------------------------------
+-- TOGGLE
+------------------------------------------------------------
+ToggleBtn.MouseButton1Click:Connect(function()
+    MainFrame.Visible = not MainFrame.Visible
+end)
+
+print("[PAZHUB - ZAMSTUDIO] Loaded - created by zamstudio")
